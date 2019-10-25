@@ -14,58 +14,6 @@ def simulator(PLPending_list, quantum_time=4):
     current_task = None
     pending = PLPending_list
     time = 0
-    set_time_quantum = quantum_time 
-    time_quantum = set_time_quantum
-    time_left = -1
-    history = []
-    while len(pending) > 0 or current_task != None:
-        ### Report Stats
-        if current_task:
-            history.append(("P"+str(current_task.id),time))
-
-        ### Tick Timer
-        time_quantum = time_quantum - 1
-
-        ### Unload Job
-        if current_task: #task currently loaded
-            if time_quantum <= 0 or time_left <= 0:
-                #Time to remove from the queue!
-                if time_left <= 0:
-                    #write final codes
-                    current_task.completion_time = time
-                    current_task.turnaround_time = time
-                    finished_list.append(current_task)
-                else:
-                    #current_task.burst_time = current_task.burst_time
-                    pending.append(current_task)
-                current_task = None
-
-        ### Load Job
-        if not current_task: #NO task currently loaded. Find one.
-            for p in pending: #handle start
-                if p.arrival_time <= time and current_task == None:
-                    current_task = p
-                    current_task.response_time = time
-                    current_task.waiting_time = time
-                    pending.remove(p)
-                    time_left = current_task.burst_time
-                    break
-
-        ### Tick Current Job
-        if current_task: #task currently loaded
-            time_left = time_left - 1
-            current_task.burst_time = current_task.burst_time - 1
-
-        if time_quantum <= 0: #reset.
-            time_quantum = set_time_quantum
-        time = time + 1
-    return (finished_list, history)
-
-def simulator(PLPending_list, quantum_time=4):
-    finished_list = []
-    current_task = None
-    pending = PLPending_list
-    time = 0
     time_quantum = quantum_time #reset
     history = []
     while len(pending) > 0 or current_task != None:
