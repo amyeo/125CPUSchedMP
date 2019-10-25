@@ -58,7 +58,7 @@ def print_input_table(process_list):
     ]
     for p in process_list:
         input_table.append(["P"+str(p.id),p.burst_time,p.arrival_time,p.priority_number])
-    
+
     in_table = SingleTable(input_table)
     in_table.title = "Input Data: "
     print(in_table.table)
@@ -86,12 +86,12 @@ def print_simulation_report(fin, history_list):
     waiting_time_ave = waiting_time_ave / counter
     turnaround_time_ave = turnaround_time_ave / counter
     average_table_data = [
-        ['計算要素', '結果数字'],
+        ['Parameter', 'Value'],
         ['Response Time Average', response_time_ave],
         ['Waiting Time Average', waiting_time_ave],
         ['Turnaround Time Average', turnaround_time_ave]
     ]
-    
+
     #Simulation value output
     value_table = SingleTable(value_table_data)
     value_table.title = "Scheduling Algorithm Result"
