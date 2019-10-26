@@ -9,6 +9,9 @@ import threading
 from MP1 import ProcessLine, load_from_file, print_input_table, print_simulation_report
 from terminaltables import SingleTable
 
+def arrival(inp):
+    return inp.arrival_time
+
 def simulator(PLPending_list, quantum_time=4):
     finished_list = []
     current_task = None
@@ -16,12 +19,23 @@ def simulator(PLPending_list, quantum_time=4):
     time = 0
     time_quantum = quantum_time #reset
     history = []
+    ##before starting, sort pending by ARRIVAL TIME
+    #pending.sort(key=arrival)
+    run = []
     while len(pending) > 0 or current_task != None:
         ### Report Stats
         if current_task:
             history.append(("P"+str(current_task.id),time))
         else:
             history.append(("X",time))
+
+        ### Add to queue applicable
+        for x in pending:
+            if x.arrival_time <= time:
+                #run.insert(0,x)
+                run.append(x)
+                pending.remove(x)
+
 
         ### Tick Timer
 
@@ -38,7 +52,7 @@ def simulator(PLPending_list, quantum_time=4):
                 current_task = None
             elif time_quantum <=0:
                 #hibernate process
-                pending.append(current_task)
+                run.append(current_task)
                 current_task = None
                 #time_quantum = quantum_time #reset
 
@@ -46,14 +60,14 @@ def simulator(PLPending_list, quantum_time=4):
         ### Load Job
         #FCFS MODE
         if current_task == None: #NO task currently loaded. Find one.
-            for p in pending: #handle start
+            for p in run: #handle start
                 #choose shortest and load.
                 if current_task == None and p.arrival_time <= time:
                     current_task = p
                     if current_task.response_time == -1:
                         current_task.response_time = time - current_task.arrival_time
                     #current_task.waiting_time = time
-                    pending.remove(p)
+                    run.remove(p)
                     time_quantum = quantum_time #reset
                     break
 
