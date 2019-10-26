@@ -51,7 +51,8 @@ def simulator(PLPending_list):
                     #choose shortest and load.
                     if p.priority_number == pending_minimum and current_task == None and p.arrival_time <= time:
                         current_task = p
-                        current_task.response_time = time - current_task.arrival_time
+                        if current_task.response_time == -1:
+                            current_task.response_time = time - current_task.arrival_time
                         #current_task.waiting_time = time
                         pending.remove(p)
                         break
