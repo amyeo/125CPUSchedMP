@@ -64,6 +64,12 @@ def print_input_table(process_list):
     print(in_table.table)
 
 """
+Allows return for sort function by process id
+"""
+def get_process_id(inp):
+    return inp.id
+
+"""
 Print RAW and AVERAGE values of simulation result
 """
 def print_simulation_report(fin, history_list):
@@ -75,6 +81,8 @@ def print_simulation_report(fin, history_list):
     waiting_time_ave = 0
     turnaround_time_ave = 0
     counter = 0
+    #sort fin by process id
+    fin.sort(key=get_process_id)
     for x in fin:
         value_table_data.append([x.id, x.burst_original, x.arrival_time, x.completion_time, x.response_time, x.waiting_time, x.turnaround_time])
         response_time_ave += x.response_time

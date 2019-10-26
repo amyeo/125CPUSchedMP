@@ -20,6 +20,8 @@ def simulator(PLPending_list):
         ### Report Stats
         if current_task:
             history.append(("P"+str(current_task.id),time))
+        else:
+            history.append(("X",time))
 
         ### Tick Timer
 
@@ -29,7 +31,9 @@ def simulator(PLPending_list):
             if current_task.burst_time <=0: #卒業状況あった
                 #UNLOAD and graduate
                 current_task.completion_time = time
-                current_task.turnaround_time = time
+                #current_task.turnaround_time = time
+                current_task.turnaround_time = current_task.completion_time-current_task.arrival_time
+                current_task.waiting_time = int(current_task.turnaround_time - current_task.burst_original)
                 finished_list.append(current_task)
                 current_task = None
 
@@ -47,8 +51,8 @@ def simulator(PLPending_list):
                     #choose shortest and load.
                     if p.priority_number == pending_minimum and current_task == None and p.arrival_time <= time:
                         current_task = p
-                        current_task.response_time = time
-                        current_task.waiting_time = time
+                        current_task.response_time = time - current_task.arrival_time
+                        #current_task.waiting_time = time
                         pending.remove(p)
                         break
 

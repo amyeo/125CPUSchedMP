@@ -20,6 +20,8 @@ def simulator(PLPending_list, quantum_time=4):
         ### Report Stats
         if current_task:
             history.append(("P"+str(current_task.id),time))
+        else:
+            history.append(("X",time))
 
         ### Tick Timer
 
@@ -29,7 +31,9 @@ def simulator(PLPending_list, quantum_time=4):
             if current_task.burst_time <=0: #卒業状況あった
                 #UNLOAD and graduate
                 current_task.completion_time = time
-                current_task.turnaround_time = time
+                #current_task.turnaround_time = time
+                current_task.turnaround_time = current_task.completion_time-current_task.arrival_time
+                current_task.waiting_time = int(current_task.turnaround_time - current_task.burst_original)
                 finished_list.append(current_task)
                 current_task = None
             elif time_quantum <=0:
@@ -42,23 +46,16 @@ def simulator(PLPending_list, quantum_time=4):
         ### Load Job
         #FCFS MODE
         if current_task == None: #NO task currently loaded. Find one.
-            #no current task executing! Start selection.
-            #find minimum
-            pending_minimum_arr = []
-            for x in pending:
-                if x.arrival_time <= time: #confine to present processes
-                    pending_minimum_arr.append(x.arrival_time)
-            if len(pending_minimum_arr) > 0:
-                pending_minimum = min(pending_minimum_arr)
-                for p in pending: #handle start
-                    #choose shortest and load.
-                    if p.arrival_time == pending_minimum and current_task == None and p.arrival_time <= time:
-                        current_task = p
-                        current_task.response_time = time
-                        current_task.waiting_time = time
-                        pending.remove(p)
-                        time_quantum = quantum_time #reset
-                        break
+            for p in pending: #handle start
+                #choose shortest and load.
+                if current_task == None and p.arrival_time <= time:
+                    current_task = p
+                    if current_task.response_time == -1:
+                        current_task.response_time = time - current_task.arrival_time
+                    #current_task.waiting_time = time
+                    pending.remove(p)
+                    time_quantum = quantum_time #reset
+                    break
 
         ### Tick Current Job
         if current_task: #task currently loaded
